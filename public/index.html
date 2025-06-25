@@ -5,100 +5,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
-    <style>
-        body {
-            margin: 0;
-            padding-bottom: 3rem;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        #form {
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.25rem;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            height: 3rem;
-            box-sizing: border-box;
-            backdrop-filter: blur(10px);
-        }
-
-        #input {
-            border: none;
-            padding: 0 1rem;
-            flex-grow: 1;
-            border-radius: 2rem;
-            margin: 0.25rem;
-        }
-
-        #input:focus {
-            outline: none;
-        }
-
-        #form>button {
-            background: #333;
-            border: none;
-            padding: 0 1rem;
-            margin: 0.25rem;
-            border-radius: 3px;
-            outline: none;
-            color: #fff;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages>li {
-            padding: 0.5rem 1rem;
-        }
-
-        #messages>li:nth-child(odd) {
-            background: #efefef;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <ul id="messages"></ul>
-    <form action="" id="form">
-        <input id="input" autocomplete="off">
-        <button>Send</button>
-    </form>
+    <!-- Nickname Modal -->
+    <div id="nickname-modal" class="modal">
+        <div class="modal-content">
+            <h2>Welcome to Chat Room! 💬</h2>
+            <p>Please enter your nickname to join:</p>
+            <form id="nickname-form">
+                <input type="text" id="nickname-input" placeholder="Enter your nickname" maxlength="20" required>
+                <button type="submit">Join Chat</button>
+            </form>
+            <div id="nickname-error" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div id="chat-interface" class="chat-interface" style="display: none;">
+        <div class="header">
+            <h1>💬 Chat Room</h1>
+            <div class="header-controls">
+                <span class="online-count" id="online-count">0 online</span>
+                <button class="theme-toggle" id="theme-toggle">
+                    <span class="icon" id="theme-icon">🌙</span>
+                    <span id="theme-text">Dark Mode</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Online Users Sidebar -->
+            <div class="sidebar">
+                <h3>👥 Online Users</h3>
+                <div class="online-users" id="online-users">
+                    <!-- Online users will be populated here -->
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="messages-container">
+                    <ul id="messages"></ul>
+                    <div id="typing-indicator" class="typing-indicator" style="display: none;">
+                        <span id="typing-text"></span>
+                    </div>
+                </div>
+
+                <form action="" id="form">
+                    <div class="input-container">
+                        <input id="input" autocomplete="off" placeholder="Type your message...">
+                        <div class="message-controls">
+                            <select id="message-type">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                            </select>
+                            <select id="private-recipient" style="display: none;">
+                                <option value="">Select user...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-
-        const form = document.getElementById('form');
-        const input = document.getElementById('input');
-        const messages = document.getElementById('messages');
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (input.value) {
-                socket.emit("chat message", input.value);
-                input.value = '';
-            }
-        });
-        socket.on('chat message', (msg) => {
-            const item = document.createElement('li');
-            item.textContent = msg;
-            messages.appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
-        });
-        document.getElementById('input').addEventListener("keyup", function (event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                form.dispatchEvent(new Event('submit', { cancelable: true }));
-            }
-        });
-
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
